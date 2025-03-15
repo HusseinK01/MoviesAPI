@@ -1,0 +1,40 @@
+﻿using Movies.Application.Models;
+using Movies.Contracts.Requests;
+using Movies.Contracts.Responses;
+using System.Collections;
+
+namespace Movies.API.Mapping
+{
+    public static class ContractMapping
+    {
+
+        public static Movie ToMovie(this CreateMovieRequest createMovieRequest)
+        {
+            return new()
+            {
+                Genres = (List<string>)createMovieRequest.Genres,
+                Title = createMovieRequest.Title,
+                Id = Guid.NewGuid(),
+                YearOfRelease = createMovieRequest.YearOfRelease
+            };
+        }
+
+        public static MovieResponse ToMovieResponse (this Movie movie)
+        {
+            return new()
+            {
+                Genres = movie.Genres,
+                YearOfRelease = movie.YearOfRelease,
+                Title = movie.Title,
+                Id = movie.Id
+            };
+        }
+
+        public static MoviesResponse ToMoviesResponse(this IEnumerable<Movie> movies)
+        {
+            return new() { Items = movies.Select(ToMovieResponse) };
+        }
+
+
+    }
+}
