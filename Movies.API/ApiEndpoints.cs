@@ -11,8 +11,10 @@ namespace Movies.API
             private const string Base = $"{ApiBase}/Movies";
 
             public const string Create = Base;
-            public const string Get = $"{Base}/{{id:guid}}";
+            public const string Get = $"{Base}/{{idOrSlug}}";
             public const string GetAll = Base;
+            public const string Update = $"{Base}/{{id:guid}}";
+            public const string Delete = $"{Base}/{{id:guid}}";
         }
 
     }

@@ -2,6 +2,7 @@
 using Movies.Contracts.Requests;
 using Movies.Contracts.Responses;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Movies.API.Mapping
 {
@@ -26,6 +27,7 @@ namespace Movies.API.Mapping
                 Genres = movie.Genres,
                 YearOfRelease = movie.YearOfRelease,
                 Title = movie.Title,
+                Slug = movie.Slug,
                 Id = movie.Id
             };
         }
@@ -34,6 +36,19 @@ namespace Movies.API.Mapping
         {
             return new() { Items = movies.Select(ToMovieResponse) };
         }
+
+        public static Movie ToMovie (this UpdateMovieRequest updateMovieRequest, Guid guid )
+        {
+
+            return new()
+            {
+                Genres = (List<string>)updateMovieRequest.Genres,
+                Title = updateMovieRequest.Title,
+                Id = guid,
+                YearOfRelease = updateMovieRequest.YearOfRelease
+            };
+
+        } 
 
 
     }

@@ -27,13 +27,15 @@ namespace Movies.API.Controllers
 
             MovieResponse movieResponse = movie.ToMovieResponse();
 
-            return Created($"api/movies/{movieResponse.Id}", movieResponse);
+            return CreatedAtAction(nameof(GetMovie), new { idOrSlug = movie.Id }, movie);
 
         }
-        [HttpPost(ApiEndpoints.Movies.Get)]
-        public async Task<IActionResult> GetMovie([FromRoute] Guid id)
+        [HttpGet(ApiEndpoints.Movies.Get)]
+        public async Task<IActionResult> GetMovie([FromRoute] string idOrSlug)
         {
-            Movie? movie = await _movieRepository.GetByIdAsync(id);
+            Movie? movie = Guid.TryParse(idOrSlug, out var guid) 
+                ?  await _movieRepository.GetByIdAsync(guid) 
+                : await _movieRepository.GetBySlugAsync(idOrSlug);
             if (movie is null)
             {
                 return NotFound();
@@ -42,15 +44,33 @@ namespace Movies.API.Controllers
             return Ok(movie.ToMovieResponse());
         }
 
-        [HttpPost(ApiEndpoints.Movies.GetAll)]
+        [HttpGet(ApiEndpoints.Movies.GetAll)]
 
         public async Task<IActionResult> GetMovies()
         {
             IEnumerable<Movie> movies = await _movieRepository.GetAllAsync();
             MoviesResponse reponse = movies.ToMoviesResponse();
-            return Ok();
+            return Ok(reponse);
 
         }
-        
+
+        [HttpPut(ApiEndpoints.Movies.Update)]
+        public async Task<IActionResult> UpdateMovie ([FromRoute]Guid id, [FromBody] UpdateMovieRequest updateMovieRequest)
+        {
+            Movie movie = updateMovieRequest.ToMovie(id);
+            bool updated = await _movieRepository.UpdateAsync(movie);
+
+            if (!updated) { return NotFound(); }
+
+            return Ok(movie.ToMovieResponse());
+        }
+
+        [HttpDelete(ApiEndpoints.Movies.Delete)]
+        public async Task<IActionResult> DeleteMovie([FromRoute] Guid id)
+        {
+            bool deleted = await _movieRepository.DeleteByIdAsync(id);
+            if (!deleted) { return NotFound(); }
+            return Ok();
+        }
     }
 }
