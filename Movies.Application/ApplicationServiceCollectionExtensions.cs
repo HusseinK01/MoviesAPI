@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Movies.Application.Database;
 using Movies.Application.Repositories;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,15 @@ namespace Movies.Application
         {
             services.AddSingleton<IMovieRepository, MovieRepository>();
             return services;
+        }
+
+        public static IServiceCollection AddNpgDB(this IServiceCollection services, string connection_string)
+        {
+
+            services.AddSingleton<IDbConnectionFactory>(_ => new NpgsqlConnectionFactory(connection_string));
+            services.AddSingleton<DbInitializer>();
+            return services;
+
         }
     }
 }
