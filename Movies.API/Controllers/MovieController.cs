@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Movies.API.Mapping;
 using Movies.Application.Models;
 using Movies.Application.Repositories;
@@ -19,6 +20,8 @@ namespace Movies.API.Controllers
             _movieService = movieRepository;
         }
 
+
+        [Authorize(AuthConstants.TrustedMemberPolicyName)]
         [HttpPost(ApiEndpoints.Movies.Create)]
         public async Task<IActionResult> CreateMovie([FromBody]CreateMovieRequest createMovieRequest, CancellationToken token)
         {
@@ -31,6 +34,7 @@ namespace Movies.API.Controllers
             return CreatedAtAction(nameof(GetMovie), new { idOrSlug = movie.Id }, movie);
 
         }
+
         [HttpGet(ApiEndpoints.Movies.Get)]
         public async Task<IActionResult> GetMovie([FromRoute] string idOrSlug, CancellationToken token)
         {
@@ -49,13 +53,13 @@ namespace Movies.API.Controllers
 
         public async Task<IActionResult> GetMovies(CancellationToken token)
         {
-            Console.WriteLine("hh");
             IEnumerable<Movie> movies = await _movieService.GetAllAsync(token);
             MoviesResponse reponse = movies.ToMoviesResponse();
             return Ok(reponse);
 
         }
 
+        [Authorize(AuthConstants.TrustedMemberPolicyName)]
         [HttpPut(ApiEndpoints.Movies.Update)]
         public async Task<IActionResult> UpdateMovie ([FromRoute]Guid id, [FromBody] UpdateMovieRequest updateMovieRequest, CancellationToken token)
         {
@@ -67,6 +71,7 @@ namespace Movies.API.Controllers
             return Ok(updated.ToMovieResponse());
         }
 
+        [Authorize(AuthConstants.AdminUserPolicyName)]
         [HttpDelete(ApiEndpoints.Movies.Delete)]
         public async Task<IActionResult> DeleteMovie([FromRoute] Guid id, CancellationToken token)
         {
