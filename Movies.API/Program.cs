@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.IdentityModel.Tokens;
-using Movies.API;
+using Movies.API.Auth;
 using Movies.API.Mapping;
 using Movies.Application;
 using Movies.Application.Database;

@@ -18,6 +18,10 @@ namespace Movies.Application.Models
         
         public required List<string> Genres { get; init; } = new();
 
+        public int? UserRating { get; set; }
+
+        public float? Rating { get; set; }
+
         private string GenerateSlug()
         {
             string SluggedTitle = SlugRegex().Replace(Title, string.Empty).ToLower().

@@ -40,6 +40,16 @@ namespace Movies.Application.Database
             name TEXT not null);
             """);
 
+            await connection.ExecuteAsync("""
+            create table if not exists ratings (
+            movieId UUID references movies (id),
+            userId UUID,
+            rating integer not null,
+            primary key(userId, movieId)
+            );
+            """);
+
+
         }
     }
 }
