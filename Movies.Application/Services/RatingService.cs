@@ -15,9 +15,20 @@ namespace Movies.Application.Services
         private readonly IRatingsRepository _ratingsRepository;
         private readonly IMovieRepository _movieRepository;
 
-        public RatingService(IRatingsRepository ratingsRepository)
+        public RatingService(IRatingsRepository ratingsRepository, IMovieRepository movieRepository)
         {
             _ratingsRepository = ratingsRepository;
+            _movieRepository = movieRepository;
+        }
+
+        public async Task<bool> DeleteRatingAsync(Guid movieId, Guid userId, CancellationToken token = default)
+        {
+
+            var movieExists = await _movieRepository.ExistsByIdAsync(movieId);
+
+            if (!movieExists) { return false; }
+
+            return await _ratingsRepository.DeleteRatingAsync(movieId, userId, token);
         }
 
         public async Task<bool> RateMovieAsync(Guid movieId, Guid userId, int rating, CancellationToken token = default)
@@ -37,5 +48,7 @@ namespace Movies.Application.Services
 
             return await _ratingsRepository.RateMovieAsync(movieId, userId, rating, token);
         }
+
+        
     }
 }

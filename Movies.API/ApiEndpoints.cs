@@ -16,8 +16,8 @@ namespace Movies.API
             public const string Update = $"{Base}/{{id:guid}}";
             public const string Delete = $"{Base}/{{id:guid}}";
 
-            public const string Rate = $"{Base}/{{id:guid}}/rate";
-            public const string DeleteRating = $"{Base}/{{id:guid}}/rate";
+            public const string Rate = $"{Base}/{{id:guid}}/rating";
+            public const string DeleteRating = $"{Base}/{{id:guid}}/rating";
 
 
 

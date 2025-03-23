@@ -18,6 +18,22 @@ namespace Movies.Application.Repositories
             _dbConnectionFactory = dbConnectionFactory;
         }
 
+        public async Task<bool> DeleteRatingAsync(Guid movieId, Guid userId, CancellationToken token = default)
+        {
+            var conn = await _dbConnectionFactory.CreateConnectionAsync();
+
+            var tx = conn.BeginTransaction();
+
+            var result = await conn.ExecuteAsync(new CommandDefinition("""
+
+                delete from ratings where userid = @userId and movieid = @movieId
+
+                """, new {userId, movieId}));
+            tx.Commit();
+
+            return result > 0;
+        }
+
         public async Task<float?> GetRatingAsync(Guid movieId, CancellationToken token = default)
         {
             var conn = await _dbConnectionFactory.CreateConnectionAsync();
@@ -54,5 +70,7 @@ namespace Movies.Application.Repositories
 
             return result > 0;
         }
+
+
     }
 }

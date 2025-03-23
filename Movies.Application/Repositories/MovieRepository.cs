@@ -93,13 +93,13 @@ namespace Movies.Application.Repositories
                     """
                     select m.*, 
                     STRING_AGG(distinct g.name, ',')  AS genres,
-                    mr.rating as UserRating, round(avg(r.rating), 1) as Rating
+                    round(avg(r.rating), 1) as Rating, mr.rating as UserRating
                     
                     from movies m
                     left join ratings r on r.movieId = m.id
-                    left join ratings mr on r.movieId  = m.id and mr.userId = @userId
+                    left join ratings mr on mr.movieId  = m.id and mr.userId = @userId
                     left join genres g on m.id = g.movieid 
-                    group by m.id, m.title, mr.rating;
+                    group by id, UserRating;
                     """, new {userId},cancellationToken: token
                 )
              );
@@ -110,8 +110,8 @@ namespace Movies.Application.Repositories
                 Title = x.title,
                 YearOfRelease = x.yearofrelease,
                 Genres = Enumerable.ToList(x.genres.Split(',')),
-                Rating = (float?)x.Rating,
-                UserRating = (int?)x.UserRating
+                Rating = (float?)x.rating,
+                UserRating = (int?)x.userrating
             });
         }
 

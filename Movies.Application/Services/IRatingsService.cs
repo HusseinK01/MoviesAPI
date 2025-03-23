@@ -10,6 +10,7 @@ namespace Movies.Application.Services
     {
 
         public Task<bool> RateMovieAsync(Guid movieId, Guid userId, int rating, CancellationToken token = default);
+        public Task<bool> DeleteRatingAsync(Guid movieId, Guid userId, CancellationToken token = default);
 
     }
 }
