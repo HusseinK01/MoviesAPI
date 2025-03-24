@@ -1,4 +1,5 @@
 ﻿using Movies.Application.Database;
+using Movies.Application.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace Movies.Application.Repositories
         public Task<(float? rating, int? userRating)> GetRatingAsync(Guid movieId,Guid userId, CancellationToken token = default);
         public Task<bool> DeleteRatingAsync(Guid movieId, Guid userId, CancellationToken token = default);
 
+        public Task<IEnumerable<MovieRating>> GetUserRatings(Guid userId, CancellationToken token = default);
 
 
     }

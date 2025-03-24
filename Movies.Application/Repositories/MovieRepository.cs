@@ -85,7 +85,7 @@ namespace Movies.Application.Repositories
 
         }
 
-        public async Task<IEnumerable<Movie>> GetAllAsync(Guid? userId = default, CancellationToken token = default)
+        public async Task<IEnumerable<Movie>> GetAllAsync(MoviesOptions options, CancellationToken token = default)
 
         {
             using var conn = await _dbConnectionFactory.CreateConnectionAsync(token);
@@ -99,8 +99,10 @@ namespace Movies.Application.Repositories
                     left join ratings r on r.movieId = m.id
                     left join ratings mr on mr.movieId  = m.id and mr.userId = @userId
                     left join genres g on m.id = g.movieid 
+                    where (@title is null or m.title like ( '%' || @title || '%'))
+                    and (@yearofrelease is null or m.yearofrelease = @yearofrelease)
                     group by id, UserRating;
-                    """, new {userId},cancellationToken: token
+                    """, new {userId = options.UserId, title = options.Title, yearofrelease = options.YearOfRelease},cancellationToken: token
                 )
              );
 

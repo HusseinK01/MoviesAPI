@@ -39,6 +39,11 @@ namespace Movies.API.Mapping
             return new() { Items = movies.Select(ToMovieResponse) };
         }
 
+        public static IEnumerable<MovieRatingResponse> ToMovieRatingsResponse(this IEnumerable<MovieRating> ratings)
+        {
+            return ratings.Select(x => new MovieRatingResponse { MovieId = x.MovieId, Rating = x.Rating, Slug = x.Slug });
+        }
+
         public static Movie ToMovie (this UpdateMovieRequest updateMovieRequest, Guid guid )
         {
 
@@ -51,6 +56,26 @@ namespace Movies.API.Mapping
             };
 
         } 
+
+        public static MoviesOptions ToMoviesOptions(this GetMoviesRequest request) {
+
+            return new()
+            {
+                Title = request.Title,
+                YearOfRelease = request.YearOfRelease
+
+            };
+
+        
+        }
+
+        public static MoviesOptions WithUserId(this MoviesOptions options, Guid? userId)
+        {
+            options.UserId = userId;
+            return options;
+
+
+        }
 
 
     }

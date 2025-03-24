@@ -53,10 +53,11 @@ namespace Movies.API.Controllers
 
         [HttpGet(ApiEndpoints.Movies.GetAll)]
 
-        public async Task<IActionResult> GetMovies(CancellationToken token)
+        public async Task<IActionResult> GetMovies([FromQuery] GetMoviesRequest request,CancellationToken token)
         {
             var userId = HttpContext.GetUserId();
-            IEnumerable<Movie> movies = await _movieService.GetAllAsync(userId, token);
+            var options = request.ToMoviesOptions().WithUserId(userId); 
+            IEnumerable<Movie> movies = await _movieService.GetAllAsync(options, token);
             MoviesResponse reponse = movies.ToMoviesResponse();
             return Ok(reponse);
 
