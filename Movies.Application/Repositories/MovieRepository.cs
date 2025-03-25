@@ -89,8 +89,18 @@ namespace Movies.Application.Repositories
 
         {
             using var conn = await _dbConnectionFactory.CreateConnectionAsync(token);
+
+            var OrderClause = string.Empty;
+
+            if (options.SortField is not null)
+            {
+                OrderClause = $"""
+                    , m.{options.SortField}
+                    order by {options.SortField} {(options.SortOrder == SortOrder.Ascending ? "asc" : "desc")}
+                    """;
+            }
             var movies_result = await conn.QueryAsync(new CommandDefinition(
-                    """
+                   $"""
                     select m.*, 
                     STRING_AGG(distinct g.name, ',')  AS genres,
                     round(avg(r.rating), 1) as Rating, mr.rating as UserRating
@@ -101,8 +111,17 @@ namespace Movies.Application.Repositories
                     left join genres g on m.id = g.movieid 
                     where (@title is null or m.title like ( '%' || @title || '%'))
                     and (@yearofrelease is null or m.yearofrelease = @yearofrelease)
-                    group by id, UserRating;
-                    """, new {userId = options.UserId, title = options.Title, yearofrelease = options.YearOfRelease},cancellationToken: token
+                    group by id, UserRating {OrderClause}
+                    limit @pagesize
+                    offset @page
+                    """, 
+                   new {
+                       userId = options.UserId, 
+                       title = options.Title,
+                       yearofrelease = options.YearOfRelease,
+                        pagesize = options.Size, page = (options.Page - 1) * options.Size
+                   },
+                   cancellationToken: token
                 )
              );
 
@@ -251,6 +270,18 @@ namespace Movies.Application.Repositories
             else { return false; }
         }
 
-        
+        public async Task<int> GetCountAsync(string? title, int? yearOfRelease, CancellationToken token = default)
+        {
+            using var conn =  await _dbConnectionFactory.CreateConnectionAsync();
+
+            var result = await conn.QuerySingleAsync<int>(new CommandDefinition("""
+                select count(id) from movies m  
+                where (@title is null or m.title like ( '%' || @title || '%'))
+                and (@yearofrelease is null or m.yearofrelease = @yearofrelease)
+                """, new { title = title, yearofrelease = yearOfRelease }, cancellationToken: token
+                ));
+
+            return result;
+        }
     }
 }

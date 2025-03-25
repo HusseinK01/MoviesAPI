@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace Movies.Contracts.Requests
 {
-    public class GetMoviesRequest
+    public class GetMoviesRequest : PagedRequest
     {
 
-        public required string? Title { get; set; }
-        public required int? YearOfRelease { get; set; }
+        public required string? Title { get; init; }
+        public required int? YearOfRelease { get; init; }
+
+        public required string? SortBy { get; init; }
 
     }
 }

@@ -58,7 +58,8 @@ namespace Movies.API.Controllers
             var userId = HttpContext.GetUserId();
             var options = request.ToMoviesOptions().WithUserId(userId); 
             IEnumerable<Movie> movies = await _movieService.GetAllAsync(options, token);
-            MoviesResponse reponse = movies.ToMoviesResponse();
+            int resultCount = await _movieService.GetCountAsync(options.Title,options.YearOfRelease, token);
+            MoviesResponse reponse = movies.ToMoviesResponse(request.Page, request.Size, resultCount);
             return Ok(reponse);
 
         }

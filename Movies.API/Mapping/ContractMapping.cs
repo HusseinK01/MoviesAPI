@@ -34,9 +34,9 @@ namespace Movies.API.Mapping
             };
         }
 
-        public static MoviesResponse ToMoviesResponse(this IEnumerable<Movie> movies)
+        public static MoviesResponse ToMoviesResponse(this IEnumerable<Movie> movies, int page, int size, int count)
         {
-            return new() { Items = movies.Select(ToMovieResponse) };
+            return new() { Items = movies.Select(ToMovieResponse), Page = page, Size = size, Count = count  };
         }
 
         public static IEnumerable<MovieRatingResponse> ToMovieRatingsResponse(this IEnumerable<MovieRating> ratings)
@@ -58,11 +58,20 @@ namespace Movies.API.Mapping
         } 
 
         public static MoviesOptions ToMoviesOptions(this GetMoviesRequest request) {
-
+            var sortField = request.SortBy?.Trim('+', '-');
+            Console.WriteLine($"Trimmed SortField: {sortField}, sort by is {request.SortBy}");
             return new()
             {
                 Title = request.Title,
-                YearOfRelease = request.YearOfRelease
+                YearOfRelease = request.YearOfRelease,
+                SortField = request.SortBy?.Trim('+', '-'),
+                Page = request.Page,
+                Size = request.Size,
+                SortOrder = request.SortBy is null ? SortOrder.Unsorted :
+                request.SortBy.StartsWith('-') ? SortOrder.Descending :
+                SortOrder.Ascending
+                
+
 
             };
 
