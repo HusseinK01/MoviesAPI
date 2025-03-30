@@ -1,4 +1,5 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Logging;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Movies.Application.Database
 {
-
     public interface IDbConnectionFactory
     {
 
@@ -19,6 +19,7 @@ namespace Movies.Application.Database
     {
         private readonly string _connetionString;
 
+
         public NpgsqlConnectionFactory(string connetionString)
         {
             _connetionString = connetionString;
@@ -26,9 +27,13 @@ namespace Movies.Application.Database
 
         public async Task<IDbConnection> CreateConnectionAsync(CancellationToken token = default)
         {
+           
+
+
             var connection = new NpgsqlConnection(_connetionString);
             await connection.OpenAsync(token);
             return connection;
+            
         }
     }
 }
